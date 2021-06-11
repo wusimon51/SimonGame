@@ -59,6 +59,9 @@ def start(e):
     }
     has_lost = False
     while not has_lost:
+        global player_queue
+        global game_queue
+        player_queue = []
         game_queue.append(choose_color())
         for color in game_queue:
             button = buttons[color]
@@ -77,6 +80,7 @@ def start(e):
                     break
             except IndexError:
                 continue
+    print('lost')
 
 # initial window setup
 root = tk.Tk()
@@ -96,9 +100,8 @@ start_button.grid(column=1, row=1, sticky='E')
 
 # main game buttons
 pixel = tk.PhotoImage(width=1, height=1)
-color_pressed = tk.StringVar()
 
-green_button = tk.Button(mainframe, text='', image=pixel, width=150, height=150, command=lambda: color_pressed.set('green'), bg='#30d94c')
+green_button = tk.Button(mainframe, text='', image=pixel, width=150, height=150, command=press_green, bg='#30d94c')
 green_button.grid(column=0, row=2, sticky='W')
 
 red_button = tk.Button(mainframe, text='', image=pixel, width=150, height=150, command=press_red, bg='#e92539')
