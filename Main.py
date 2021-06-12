@@ -18,19 +18,27 @@ def choose_color():
 
 
 def press_green():
-    player_queue.append('green')
+    global player_state, player_queue 
+    if player_state:
+        player_queue.append('green')
 
 
 def press_red():
-    player_queue.append('red')
+    global player_state, player_queue
+    if player_state:
+        player_queue.append('red')
 
 
 def press_yellow():
-    player_queue.append('yellow')
+    global player_state, player_queue
+    if player_state:
+        player_queue.append('yellow')
 
 
 def press_blue():
-    player_queue.append('blue')
+    global player_state, player_queue
+    if player_state:
+        player_queue.append('blue')
 
 
 def game_threading():
@@ -75,7 +83,7 @@ def start(e):
     }
     has_lost = False
     while not has_lost:
-        global player_queue, game_queue, score, score_label
+        global player_queue, game_queue, score, score_label, player_state
         player_queue = []
         game_queue.append(choose_color())
         # display current sequence to player
@@ -88,6 +96,7 @@ def start(e):
             time.sleep(0.5)
         current_index = 0
         # get player input
+        player_state = True
         while current_index < len(game_queue):
             try:
                 if player_queue[current_index] == game_queue[current_index]:
@@ -99,8 +108,10 @@ def start(e):
                 continue
         if not has_lost:
             score += 1
+            player_state = False
             score_label.configure(text='Score: '+str(score))
     lose_box()        
+    player_state = False
 
 # initial window setup
 root = tk.Tk()
