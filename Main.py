@@ -81,6 +81,7 @@ def start(e):
         # display current sequence to player
         for color in game_queue:
             button = buttons[color]
+            time.sleep(0.5)
             button.configure(bg='white')
             time.sleep(0.5)
             button.configure(bg=button_colors[color])
