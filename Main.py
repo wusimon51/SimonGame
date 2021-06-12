@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import random
 import time
 from threading import *
@@ -17,22 +18,18 @@ def choose_color():
 
 
 def press_green():
-    print('green')
     player_queue.append('green')
 
 
 def press_red():
-    print('red')
     player_queue.append('red')
 
 
 def press_yellow():
-    print('yellow')
     player_queue.append('yellow')
 
 
 def press_blue():
-    print('blue')
     player_queue.append('blue')
 
 
@@ -41,6 +38,25 @@ def game_threading():
     t1 = Thread(target=start, args=(event,))
     t1.daemon = True
     t1.start()
+
+
+def restart(window):
+    global game_queue, player_queue, score, score_label
+    window.destroy()
+    game_queue = player_queue = []
+    score = 0
+    score_label.configure(text='Score: 0') 
+    game_threading()
+
+
+def lose_box():
+    top = tk.Toplevel(root)
+    top.title('Game Over')
+    top.geometry(f'250x100+{root.winfo_x() + int(root.winfo_width() / 4)}+{root.winfo_y() + int(root.winfo_height() / 4)}')
+
+    message = tk.Label(top, text='You lose! Retry?', height=2).pack()
+    yes_button = tk.Button(top, text='Yes', command=lambda: restart(top)).pack(side=tk.LEFT, padx=40)
+    no_button = tk.Button(top, text='No', command=quit).pack(side=tk.RIGHT, padx=40)
 
 
 def start(e):
@@ -59,18 +75,18 @@ def start(e):
     }
     has_lost = False
     while not has_lost:
-        global player_queue
-        global game_queue
+        global player_queue, game_queue, score, score_label
         player_queue = []
         game_queue.append(choose_color())
+        # display current sequence to player
         for color in game_queue:
             button = buttons[color]
             button.configure(bg='white')
             time.sleep(0.5)
             button.configure(bg=button_colors[color])
             time.sleep(0.5)
-
         current_index = 0
+        # get player input
         while current_index < len(game_queue):
             try:
                 if player_queue[current_index] == game_queue[current_index]:
@@ -80,7 +96,10 @@ def start(e):
                     break
             except IndexError:
                 continue
-    print('lost')
+        if not has_lost:
+            score += 1
+            score_label.configure(text='Score: '+str(score))
+    lose_box()        
 
 # initial window setup
 root = tk.Tk()
@@ -92,8 +111,8 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
 # score label and start button at the top
-score = tk.Label(mainframe, text='Score: ' + str(score), height=2)
-score.grid(column=0, row=1, sticky=('W'))
+score_label = tk.Label(mainframe, text='Score: ' + str(score), height=2)
+score_label.grid(column=0, row=1, sticky=('W'))
 
 start_button = tk.Button(mainframe, text='Start', width=4, command=game_threading)
 start_button.grid(column=1, row=1, sticky='E')
